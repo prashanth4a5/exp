@@ -36,7 +36,7 @@
 					
 					<username>mulefour</username>
 					<password>Mulefour4</password>
-					<applicationName>${artifactId}</applicationName>
+					<applicationName>${project.artifactId}</applicationName>
 					<redeploy>true</redeploy>
 					
 					<environment>Sanbox</environment>
