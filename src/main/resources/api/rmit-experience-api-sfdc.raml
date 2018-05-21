@@ -1,0 +1,42 @@
+#%RAML 1.0
+version: v1
+baseUri: https://mocksvc.mulesoft.com/mocks/be8354f2-eaf2-4f6c-af67-93db229c3f37 # baseUri: https://mocksvc.mulesoft.com/mocks/3331ff1b-ea17-4af5-aa8f-73d5b464f2d4 # 
+title: rmit-experience-api-sfdc
+mediaType: application/json
+description: Salesforce POST the data
+documentation:
+  - title: rmit-experience-api-sfdc
+    content: Salesforce POST the data
+resourceTypes: 
+  getResource: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/resource_types/getItem.raml
+  postResource: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/resource_types/postResource.raml
+
+traits: 
+  client-id-required: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/traits/client-id-auth.raml
+  hasError: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/hasError.raml
+  hasResponseItem: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/traits/hasReponseItem.raml
+  hasRequestItem: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/traits/hasRequestItem.raml
+
+types: 
+  21CC: !include types/21CCList.raml
+/status:
+ type: getResource
+ get:
+   is: [
+        hasResponseItem: {
+          exampleResponseItem: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.1/examples/response/status.json
+          }
+        ] 
+/enrolments/21CC:
+  is: [client-id-required, hasError]
+  type: postResource
+  post:
+    is: [
+        hasResponseItem: {
+          exampleResponseItem: !include examples/enrolments_21CC/response.json
+          },
+        hasRequestItem: {
+          typeName:  21CC,
+          exampleRequestItem: !include examples/enrolments_21CC/request.json
+          }
+        ] 

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+		<flow name="sendToSAMS" doc:id="44cc550c-258c-458a-8b93-dba9f46b7871">
+		<set-variable value="#[%dw 2.0 output application/java --- ({(payload map (( $.studentId ++ $.courseId ) : $.courseConnectionId) map $)})]" doc:name="customID" doc:id="2504e78e-fc52-45fe-be42-a7c4795d645d" variableName="customID"/>
+		<logger level="INFO" doc:name="Log CustomIDs" doc:id="c2decd5e-f22d-44fc-86e5-40d04b99a8e6" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "CustomIDs created ","customIDs":vars.customID}]'/>
+		<ee:transform doc:name="JSON to XML Transformation" doc:id="896a1370-cbea-4eb8-8f16-341b9f2d98fc">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/xml encoding="UTF-8"
+---
+{
+		AMS_21CC_REG_RQST @(xmlns:"http://xmlns.oracle.com/Enterprise/Tools/schemas/AMS_21CC.AMS_21CC_REG_RQST.V1"): 		
+		{ 			
+			AMS_21CC_REG @(xmlns:"http://xmlns.oracle.com/Enterprise/Tools/schemas/AMS_21CC.AMS_21CC_REG.V1"): (payload map (item) -> {				
+				id: item.studentId,
+				badge_id: item.courseId,
+				status: item.enrolStatus,
+				issued_dttm: "",
+				distrib_dttm: "",
+				expiry_dttm: "",
+				section_id: item.courseOfferingId
+			})
+}
+}
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="send to SAMS Log" doc:id="36fca11b-2312-4873-a579-f5ad0bdaf25f" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "sending to SAMS ","payload":payload}]'/>
+		<http:request method="POST" doc:name="RequestToSAMS" doc:id="4d56455a-2022-412e-a1f1-554a1179d9b5" config-ref="SAMS_System_API" path="${secure::sams.path}" responseTimeout="${secure::sams.request.timeout}">
+			<http:headers ><![CDATA[#[output applicaton/java
+---
+{
+	"client_id" : p('secure::sams.client.id'),
+	"client_secret" : p('secure::sams.client.secret'),
+	"Content-Type" : "application/xml"
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="SAMS Response Log" doc:id="c5ea8880-940e-4cf7-8197-cf14c9f7381f" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "Response from SAMS ","payload":payload}]'/>
+		<try doc:name="Try" doc:id="cc7daeaf-55a9-4e50-b9f9-949fb464b087" >
+			<ee:transform doc:name="XML to JSON Transformation" doc:id="56534281-880b-44f9-9ce0-c44a53d98e7a">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+ payload.AMS_21CC_REG_RESP.*AMS_21CC_REG_RSP map (
+ 	{		
+ 	"courseConnectionId" :  vars.customID[$.id ++ $.badge_id],
+ 	"result" : $.result,
+ 	"errorCode": $.retmsg.msgcode,
+	"errorText": $.retmsg.msgtext	
+ }
+ ) 
+
+ ]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			<error-handler >
+				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="760bc3b5-dfdb-410e-a1e1-4e0034ae2ee0" type="EXPRESSION">
+					<ee:transform doc:name="Error Response Payload" doc:id="19bf5868-7c7e-409b-bf88-68a44915c13f" >
+						<ee:message >
+							<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.customID pluck $$ map (
+ 	{	
+ 	"courseConnectionId" : vars.customID[$],
+ 	"result" : "Error",
+ 	"errorCode": "",
+	"errorText": "SAMS schema validation failure. Please send valid request message"
+ }
+ )]]></ee:set-payload>
+						</ee:message>
+					</ee:transform>
+				</on-error-continue>
+				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="e81e3871-f500-4b9e-8ee7-392951b39413" type="ANY">
+					<logger level="INFO" doc:name="Error Log" doc:id="2bef08d4-b670-4591-931a-1be185baa0c0" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "Error occured while parsing SAMS response","payload":payload}]'/>
+				</on-error-propagate>
+			</error-handler>
+		</try>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4cc3487c-4ded-4a7f-91b1-5dd59f57be58" type="ANY">
+				<logger level="INFO" doc:name="Error Log" doc:id="eb980573-bb1f-4a9f-8ebd-109c88c47573" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "Error occured while sending to SAMS ","payload":payload}]'/>
+			</on-error-propagate>
+		</error-handler>
+	
+</flow> 
+	</mule>

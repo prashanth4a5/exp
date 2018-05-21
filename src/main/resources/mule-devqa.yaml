@@ -1,0 +1,14 @@
+http: 
+      port : "8081"
+provider: "sams"
+application: "rmit-experience-api-sfdc"
+sams:
+      host: "rmit-system-api-sams.au-s1.cloudhub.io"
+      basepath: "/api"
+      path: "/enrolments/21cc"
+      port: "80"
+      request:
+              timeout: "180000"
+      client:
+           secret: "[K3P3UrB5gr/iGD5YrGO/fl2uBG7dPjA5ydnKvk4FjPGvTymP5gqVcQ==]"
+           id: "d01fae51a32e4d0bba0aa142b7e9a94d"

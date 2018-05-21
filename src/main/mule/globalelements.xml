@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="86fec3f5-c463-4e6b-80fa-b3735fba63bd" file="errorCodes.properties" />
+	<api-gateway:autodiscovery apiId="12876467" doc:name="API Autodiscovery" doc:id="76393b87-92c2-4aef-979b-226b63fe4697" flowRef="rmit-experience-api-sfdc-console" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="7f5742e1-a4d9-49f4-b79a-42a2e46ff76d" file="mule-${mule.env}.yaml" key="${securityKey}" >
+		<secure-properties:encrypt algorithm="Blowfish" />
+	</secure-properties:config>
+	<http:request-config name="SAMS_System_API" doc:name="HTTP Request configuration" doc:id="247cceca-4e72-45f3-91c5-b0367029f22f" basePath="${secure::sams.basepath}" >
+		<http:request-connection host="${secure::sams.host}" port="${secure::sams.port}" />
+	</http:request-config>
+</mule>

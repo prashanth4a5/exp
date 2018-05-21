@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="rmit-experience-api-sfdc-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="8081" />
+    </http:listener-config>
+    <apikit:config name="rmit-experience-api-sfdc-config" raml="rmit-experience-api-sfdc.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+	<flow name="rmit-experience-api-sfdc-main">
+        <http:listener config-ref="rmit-experience-api-sfdc-httpListenerConfig" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <set-variable value='#[now() as LocalDateTime as String replace "-" with "" replace ":" with "" replace "." with "" ]' doc:name="transactionID" doc:id="451ad538-196b-41fd-b7f5-331729f59669" variableName="transactionID"/>
+		<apikit:router config-ref="rmit-experience-api-sfdc-config" doc:name="APIkit Router"/>
+        <error-handler>
+                 <on-error-propagate type="APIKIT:BAD_REQUEST" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+				<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="f220348d-f8f9-47ff-ac45-fb58ea3a540f" doc:name="BAD_REQUEST">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+	{    
+		"id" : "ID-" ++ p('mule.env') ++ "-" ++ vars.transactionID , 
+		"result" : "ERROR",
+		"code" : "400", 
+	    "application" : p('secure::application'),
+		"provider" : p('secure::provider'), 
+		"payload" : p('400.message') ++ " : " ++ p('400.description') ++ ":" ++ error.description
+	}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="bdc34c8a-bdcd-4609-9c90-759863507971" doc:name="METHOD_NOT_ALLOWED">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+	{    
+		"id" : "ID-" ++ p('mule.env') ++ "-" ++ vars.transactionID , 
+		"result" : "ERROR",
+		"code" : "405", 
+	    "application" : p('secure::application'),
+		"provider" : p('secure::provider'), 
+		"payload" : p('405.message') ++ " : " ++ p('405.description') ++ ":" ++ error.description
+	}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+              <on-error-propagate type="APIKIT:NOT_FOUND" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="074d32ee-2447-4eb4-a6fd-f9cf6fe5d299" doc:name="NOT_FOUND">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+	{    
+		"id" : "ID-" ++ p('mule.env') ++ "-" ++ vars.transactionID , 
+		"result" : "ERROR",
+		"code" : "404", 
+	    "application" : p('secure::application'),
+		"provider" : p('secure::provider'), 
+		"payload" : p('404.message') ++ " : " ++ p('404.description') ++ ":" ++ error.description
+	}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="d5badcfd-d7a9-4e08-b1f5-4c51c23b5a0e" doc:name="UNSUPPORTED_MEDIA_TYPE">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+	{    
+		"id" : "ID-" ++ p('mule.env') ++ "-" ++ vars.transactionID , 
+		"result" : "ERROR",
+		"code" : "415", 
+	    "application" : p('secure::application'),
+		"provider" : p('secure::provider'), 
+		"payload" : p('415.message') ++ " : " ++ p('415.description') ++ ":" ++ error.description
+	}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="f157d30d-bff3-4413-bd8a-15bd751ea556" type="ANY">
+				<ee:transform doc:name="ANY ERROR" doc:id="66a6a2c3-3ffe-47e7-9f79-12562d0158a7" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+	{    
+		"id" : "ID-" ++ p('mule.env') ++ "-" ++ vars.transactionID , 
+		"result" : "ERROR",
+		"code" : "500", 
+	    "application" : p('secure::application'),
+		"provider" : p('secure::provider'), 
+		"payload" :  error.description
+			
+			
+	}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="rmit-experience-api-sfdc-console">
+        <http:listener config-ref="rmit-experience-api-sfdc-httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="rmit-experience-api-sfdc-config" doc:name="APIkit Console"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:name="NOT_FOUND">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{message: "Resource not found"}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\status:rmit-experience-api-sfdc-config">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="6a8f24f5-73ba-4d3f-a3b0-599e84c6b74d" doc:name="Status">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"title": p('secure::application'), 
+	"version":"v1", 
+	"requestTime": now()  as DateTime {format: "yyyyMMddHHmmssSSSSs"}
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config">
+		<logger level="INFO" doc:name="Request Recieved Log" doc:id="3a0b5b4d-befb-42c9-915d-20239961c987" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "POST request recieved ","payload":payload}]'/>
+		<flow-ref doc:name="sendToSAMS" doc:id="3eab2fdf-5328-4c29-a109-297a0ec15d51" name="sendToSAMS"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="539019ce-6deb-4f9e-bcc1-c5f58f5c3772" doc:name="Transform Message to iPaaS format">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  id: "ID-"++ p('mule.env') ++ "-" ++ vars.transactionID,
+  result: "SUCCESS",
+  code: "200",
+  application: p('secure::application'),
+  provider: p('secure::provider'),
+  payload: (payload)
+
+ }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<logger level="INFO" doc:name="Completion Log" doc:id="76e16207-6609-4ebb-87ab-cd768ef5fc45" message='#[%dw 2.0 output application/json --- {"transactionID" : vars.transactionID, "message" : "POST request Completed ","payload":payload}]' />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b924af7d-d344-4511-a0cb-ddd9b8b5796e" >
+				<ee:transform doc:name="ANY ERROR" doc:id="c844edd5-98e8-4481-be74-eb30037216c5" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+	{    
+		"id" : "ID-" ++ p('mule.env') ++ "-" ++ vars.transactionID , 
+		"result" : "ERROR",
+		"code" : "500", 
+	    "application" : p('secure::application'),
+		"provider" : p('secure::provider'), 
+		"payload" :  error.description
+			
+			
+	}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+
+</mule>

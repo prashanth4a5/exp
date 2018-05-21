@@ -1,0 +1,58 @@
+{
+  "configs": [
+    "rmit-experience-api-sfdc.xml",
+    "Implementation.xml",
+    "globalelements.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "rmit-experience-api-sfdc",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [
+        "api\\.gitignore",
+        "api\\examples\\enrolments_21CC\\request.json",
+        "api\\examples\\enrolments_21CC\\response.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\400.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\401.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\403.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\404.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\405.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\406.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\407.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\408.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\415.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\500.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\errors\\503.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\request\\trigger.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\examples\\response\\status.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\hasError.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\resource_types\\collection.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\resource_types\\createAnItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\resource_types\\getItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\resource_types\\itemById.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\resource_types\\postResource.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\cacheable.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\client-id-auth.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\hasError.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\hasReponseItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\hasRequestItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\hasResponseCollection.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\traits\\paginated.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\types\\Error.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\types\\trigger\\event.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.1\\types\\trigger\\events.raml",
+        "api\\rmit-experience-api-sfdc.raml",
+        "api\\types\\21CC.raml",
+        "api\\types\\21CCList.raml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

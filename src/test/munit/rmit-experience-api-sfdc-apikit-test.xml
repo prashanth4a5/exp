@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd http://www.mulesoft.org/schema/mule/munit-tools http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd ">
+    <munit:config name="rmit-experience-api-sfdc-apikit-test.xml" />
+    <http:request-config name="HTTP_Request_Configuration" basePath="/api" doc:name="HTTP Request configuration">
+        <http:request-connection host="localhost" port="8081" />
+    </http:request-config>
+    <munit:before-test name="rmit-experience-api-sfdc-apikit-testBefore_Test" description="Before tests actions" doc:id="a3ccd0ab-fdb7-4ad2-a5c2-863570ecbd8a" >
+		<set-variable value='#[dw::Core::now()  as DateTime {format: "yyyyMMddHHmmssSSSSs"}]' doc:name="transactionID" doc:id="96e04a34-d816-4fff-abf3-88a2c6a87d95" variableName="transactionID"/>
+	
+	</munit:before-test>
+	<munit:test name="get:\status:rmit-experience-api-sfdc-config-200-application\json-FlowTest" description="Verifying functionality of [get:\status:rmit-experience-api-sfdc-config-200-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="get:\status:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/status" doc:name="Request">
+                <http:headers><![CDATA[#[output applicaton/java
+---
+{
+	"Accept" : "application/json"
+}]]]></http:headers>
+            </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(200)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 200" />
+        </munit:validation>
+    </munit:test>
+    <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-200-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-200-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <set-payload value="#[MunitTools::getResourceAsString('scaffolder/request/post_enrolments_21cc_application_json.json')]" doc:name="Set Payload" mimeType="application/json"/>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="57f68235-070b-4010-8e1a-9f0f5859e025" processor="http:request">
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('sams_response.xml')]" mediaType="application/xml" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+        </munit:behavior>
+        <munit:execution>
+			<flow-ref doc:name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config" doc:id="f51e2b00-2793-4371-8bd2-38f361c3ed85" name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config"/>
+        </munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4a43a42c-0933-430b-9958-4d2455cda858" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+    <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-404-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-404]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="get:\status:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:behavior >
+			<set-payload value="#[MunitTools::getResourceAsString('scaffolder/request/post_enrolments_21cc_application_json.json')]" doc:name="Set Payload" doc:id="b5acb79f-a162-4ae3-aeb2-ecb671e708c2" mimeType="application/json" />
+		</munit:behavior>
+		<munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="POST" path="/enrolments/21CC/notfound" doc:name="Request">
+<http:headers><![CDATA[#[output applicaton/java
+---
+{
+	"Accept" : "application/json"
+}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="404" />
+				</http:response-validator>          
+ </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(404)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 404" />
+        </munit:validation>
+    </munit:test>
+        <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-400-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-400]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="get:\status:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+		<munit:behavior>
+			<set-payload value="{
+random payload
+}" doc:name="Set Payload" doc:id="370f301d-62b0-4713-aeca-eb80caff90ff" />
+		</munit:behavior>
+		<munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="POST" path="/enrolments/21CC" doc:name="Request">
+<http:headers><![CDATA[#[output applicaton/java
+---
+{
+	"Accept" : "application/json"
+}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="400" />
+				</http:response-validator>          
+ </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(400)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 400" />
+        </munit:validation>
+    </munit:test>
+        <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-405-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-405]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="get:\status:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:behavior >
+			<set-payload value="#[MunitTools::getResourceAsString('scaffolder/request/post_enrolments_21cc_application_json.json')]" doc:name="Set Payload" doc:id="b5acb79f-a162-4ae3-aeb2-ecb671e708c2" mimeType="application/json" />
+		</munit:behavior>
+		<munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/enrolments/21CC" doc:name="Request">
+<http:headers><![CDATA[#[output applicaton/java
+---
+{
+	"Accept" : "application/json"
+}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="405" />
+				</http:response-validator>          
+ </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(405)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 405" />
+        </munit:validation>
+    </munit:test>
+        <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-415-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-415]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="get:\status:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:behavior >
+			<set-payload value="#[MunitTools::getResourceAsString('scaffolder/request/post_enrolments_21cc_application_json.json')]" doc:name="Set Payload" doc:id="b5acb79f-a162-4ae3-aeb2-ecb671e708c2" mimeType="application/json" />
+			<munit-tools:mock-when doc:name="Mock when" doc:id="4f44d007-8d2c-4d8a-8ca8-a1c51902d7b6" processor="apikit:router">
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="POST" path="/enrolments/21CC" doc:name="Request">
+<http:headers><![CDATA[#[output applicaton/java
+---
+{
+	"Content-Type" : "application/json"
+}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="415" />
+				</http:response-validator>          
+ </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(415)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 415" />
+        </munit:validation>
+    </munit:test>
+        <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-500-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-400]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="get:\status:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:behavior >
+			<set-payload value="#[MunitTools::getResourceAsString('scaffolder/request/post_enrolments_21cc_application_json.json')]" doc:name="Set Payload" doc:id="b5acb79f-a162-4ae3-aeb2-ecb671e708c2" mimeType="application/json" />
+			<munit-tools:mock-when doc:name="Mock when" doc:id="0de88330-0a18-43e6-9550-90daa201572b" processor="apikit:router">
+				<munit-tools:then-return >
+					<munit-tools:error typeId="MULE:UNKNOWN" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution>
+            <http:request config-ref="HTTP_Request_Configuration" method="GET" path="/enrolments/21CC" doc:name="Request">
+<http:headers><![CDATA[#[output applicaton/java
+---
+{
+	"Accept" : "application/json"
+}]]]></http:headers>
+				<http:response-validator >
+					<http:success-status-code-validator values="500" />
+				</http:response-validator>          
+ </http:request>
+        </munit:execution>
+        <munit:validation>
+            <munit-tools:assert-that expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(500)]" message="The HTTP Status code is not correct!" doc:name="Assert That Status Code is 500" />
+        </munit:validation>
+    </munit:test>
+        <munit:test name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-negative-case-application\json-FlowTest" description="Verifying functionality of [post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config-negative-case-application\json]">
+        <munit:enable-flow-sources>
+            <munit:enable-flow-source value="rmit-experience-api-sfdc-main" />
+            <munit:enable-flow-source value="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config" />
+        </munit:enable-flow-sources>
+        <munit:behavior>
+            <set-payload value="#[MunitTools::getResourceAsString('scaffolder/request/post_enrolments_21cc_application_json.json')]" doc:name="Set Payload" mimeType="application/json"/>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="57f68235-070b-4010-8e1a-9f0f5859e025" processor="http:request">
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:TIMEOUT" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+        </munit:behavior>
+        <munit:execution>
+			<flow-ref doc:name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config" doc:id="f51e2b00-2793-4371-8bd2-38f361c3ed85" name="post:\enrolments\21CC:application\json:rmit-experience-api-sfdc-config"/>
+        </munit:execution>
+		<munit:validation>
+			<munit-tools:assert-that doc:name="Assert that" doc:id="4a43a42c-0933-430b-9958-4d2455cda858" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+        </munit:validation>
+    </munit:test>
+</mule>

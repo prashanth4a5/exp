@@ -1,0 +1,14 @@
+{    
+	"id" : "ID-dev-6r87t87587" , 
+	"result" : "success",
+	"code" : "200", 
+	"application" : "rmit-experience-api-sfdc",
+	"provider" : "saams", 
+	"payload" : 
+	{ 
+		"courseConnectionId": "",
+		"result": "",
+		"errorCode": "",
+		"errorText": ""
+	}
+}
