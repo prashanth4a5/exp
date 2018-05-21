@@ -72,26 +72,23 @@
              
 					<deploymentType>cloudhub</deploymentType>
 					<muleVersion>${mule.version}</muleVersion>
-					<workers>${cloudhub.workers}</workers>
-					<username>${user.name}</username>
-					<password>${user.password}</password>
+					
+					<username>mulefour</username>
+					<password>Mulefour4</password>
 					<applicationName>${artifactId}</applicationName>
 					<redeploy>true</redeploy>
-					<businessGroup>${cloudhub.businessGroup}</businessGroup>
-					<environment>${cloudhub.environment}</environment>
+					
+					<environment>Sanbox</environment>
 					<properties>
-						<mule.env>${mule.env}</mule.env>
-						<securityKey>${mule.security.key}</securityKey>
+						<mule.env>devqa</mule.env>
+						<securityKey>12345</securityKey>
 						<anypoint.platform.analytics_base_uri>https://analytics-ingest.anypoint.mulesoft.com</anypoint.platform.analytics_base_uri>
 						<anypoint.platform.coreservice_base_uri>https://anypoint.mulesoft.com/accounts</anypoint.platform.coreservice_base_uri>
 						<anypoint.platform.platform_base_uri>https://anypoint.mulesoft.com/apiplatform</anypoint.platform.platform_base_uri>
 						<anypoint.platform.contracts_base_uri>https://anypoint.mulesoft.com/apigateway/ccs</anypoint.platform.contracts_base_uri>
-						<anypoint.platform.client_id>${client_id}</anypoint.platform.client_id>
-						<anypoint.platform.client_secret>${client_secret}</anypoint.platform.client_secret>
-						<anypoint.manager.api_name>${api_name}</anypoint.manager.api_name>
-						<anypoint.manager.api_version>${api_version}</anypoint.manager.api_version>
+
 					</properties>
-					<region>ap-southeast-2</region>
+					
 				</configuration>
 			</plugin>
 			
