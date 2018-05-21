@@ -173,6 +173,13 @@
     <artifactId>mule-module-xml</artifactId>
     <version>4.0.0-M5.2</version>
 </dependency>
+		<!-- https://mvnrepository.com/artifact/org.mule.modules/mule-module-dsl-api -->
+<dependency>
+    <groupId>org.mule.modules</groupId>
+    <artifactId>mule-module-dsl-api</artifactId>
+    <version>1.0.0-M5.2</version>
+</dependency>
+
     </dependencies>
 
 	<repositories>
