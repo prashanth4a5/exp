@@ -44,7 +44,7 @@
 						<securityKey>12345</securityKey>
 						
 					</properties>
-					
+					 </cloudHubDeployment>
 				</configuration>
 			</plugin>
 			
