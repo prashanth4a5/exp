@@ -48,7 +48,8 @@
                   <anypoint.platform.contracts_base_uri>https://anypoint.mulesoft.com/apigateway/ccs</anypoint.platform.contracts_base_uri>
                   <anypoint.platform.client_id>f1141056febb41b497ad776d6c53c2e9</anypoint.platform.client_id>
                   <anypoint.platform.client_secret>f89824545eA848229458e6F27e6312c5</anypoint.platform.client_secret>
-                
+                                  <anypoint.manager.api_name>${api_name}</anypoint.manager.api_name>
+                  <anypoint.manager.api_version>${api_version}</anypoint.manager.api_version>
 					</properties>
 					 </cloudHubDeployment>
 				</configuration>
