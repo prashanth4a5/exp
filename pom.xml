@@ -21,14 +21,13 @@
 	<build>
 		<plugins>
 
-			
 
 			<plugin>
 				<groupId>org.mule.tools.maven</groupId>
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
-				<configuration>
+								<configuration>
 				<classifier>mule-application</classifier>
              
 					<deploymentType>cloudhub</deploymentType>
@@ -39,7 +38,7 @@
 					<applicationName>${project.artifactId}</applicationName>
 					<redeploy>true</redeploy>
 					
-					<environment>Sanbox</environment>
+					<environment>Sandbox</environment>
 					<properties>
 						<mule.env>devqa</mule.env>
 						<securityKey>12345</securityKey>
@@ -70,7 +69,7 @@
                 </executions>
                 <configuration>
                     <coverage>
-                        <runCoverage>true</runCoverage>
+                        <runCoverage>false</runCoverage>
                         <formats>
                             <format>html</format>
                         </formats>
@@ -103,7 +102,6 @@
             <version>1.1.1</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-
     	<dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-scripting-module</artifactId>
@@ -116,24 +114,6 @@
             <version>1.0.1</version>
             <classifier>mule-plugin</classifier>
         </dependency>
-    	<dependency>
-            <groupId>com.mulesoft.munit</groupId>
-            <artifactId>munit-runner</artifactId>
-            <version>2.1.1</version>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>	<dependency>
-            <groupId>com.mulesoft.munit</groupId>
-            <artifactId>munit-tools</artifactId>
-            <version>2.1.1</version>
-            <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>
-<dependency>
-    <groupId>org.mule.distributions</groupId>
-    <artifactId>mule-runtime-impl-bom</artifactId>
-    <version>4.1.1</version>
-</dependency>
 
     </dependencies>
 
@@ -144,7 +124,7 @@
             <url>https://maven.anypoint.mulesoft.com/api/v1/maven</url>
             <layout>default</layout>
         </repository>
-		        <repository>
+                <repository>
 			<id>Central</id>
 			<name>Central</name>
 			<url>http://repo1.maven.org/maven2/</url>
@@ -156,7 +136,13 @@
             <url>https://repository.mulesoft.org/releases/</url>
             <layout>default</layout>
         </repository>
+        <repository>
+        			<id>mule-ee-releases</id>
+			<name>MuleEE Releases Repository</name>
+			<url>https://repository.mulesoft.org/nexus-ee/content/repositories/releases-ee/
+			</url>
 
+		</repository>
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -168,10 +154,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
-	        <pluginRepository>
-        <id>mule-public</id>
-        <url>https://repository.mulesoft.org/nexus/content/repositories/releases</url>
-    </pluginRepository>
     </pluginRepositories>
 
 </project>
